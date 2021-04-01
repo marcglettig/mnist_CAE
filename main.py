@@ -68,18 +68,6 @@ class VAE(nn.Module):
             x = torch.cat((x, c), dim=-1)
         mu, log_var = self.encoder(x)
         z = self.sampling(mu, log_var)
-        if abs(z[:, 0]).max() > 1000:
-            print(abs(z[:, 0]).max())
-            print('z: ', z[abs(z[:, 0]).argmax(), 0])
-            print('log_var: ', log_var[abs(z[:, 0]).argmax()])
-            print('mu: ', mu[abs(z[:, 0]).argmax()])
-            print('x: ', x[abs(z[:, 0]).argmax()])
-        if abs(z[:, 1]).max() > 1000:
-            print(abs(z[:, 1]).max())
-            print('z: ', z[abs(z[:, 1]).argmax(), 1])
-            print('log_var: ', log_var[abs(z[:, 1]).argmax()])
-            print('mu: ', mu[abs(z[:, 1]).argmax()])
-            print('x: ', x[abs(z[:, 1]).argmax()])
         return z
 
 
@@ -203,6 +191,8 @@ if __name__ == '__main__':
     df['x'] = pd.DataFrame(z[:, 0]).astype('float')
     df['y'] = pd.DataFrame(z[:, 1]).astype('float')
     g = sns.lmplot(x='x', y='y', hue='label', data=df, fit_reg=False, legend=True)
+    g.set(xlim=(-600, 600))
+    g.set(ylim=(-600, 600))
     if conditional > 1:
         g.set(title='Conditional')
         g.savefig('samples/latent_cond_' + '.png')
